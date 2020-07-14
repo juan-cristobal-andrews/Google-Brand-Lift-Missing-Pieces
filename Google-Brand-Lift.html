@@ -13090,6 +13090,7 @@ div#notebook {
 <li><b>Test group:</b> People who have seen our ads</li>
 <li><b>Control group:</b> People who were eligible by our campaign segmentation, but didn’t saw our ads.</li>
 </ul>
+<p><img src="images/sample.png" width="50%" /></p>
 <p>Surveys from both groups will be gathered and different metrics such as Brand Lift will be computed and shown in the dashboard as soon a “detectable” result is found, which Google defines this to be as a Lift &gt;2.0%.</p>
 <p><b>Results</b></p>
 <p>Once enough survey responses are collected the tool will present its results in terms of expected values and their corresponding (confidence) intervals in the form of the following metrics:</p>
@@ -13100,16 +13101,17 @@ div#notebook {
 <li><b>Relative Brand Lift:</b> Increase of Baseline PRR due to the tested campaign (Absolute Brand Lift / Baseline PRR).</li>
 <li><b>Total Survey Responses:</b> Number of total surveys (Test + Control).</li>
 </ul>
-<p>Other metrics engineered from the above, such as as Cost Per Lifted User, Exposed to Ads, Not Exposed to Ads are also included in the report.</p>
+<p>Other metrics engineered from the above, such as <i>Cost Per Lifted User</i>, <i>Exposed to Ads</i>, <i>Not Exposed to Ads</i> are also included in the report.</p>
 <p><i>* PRR: Positive Response Rate</i></p>
 <h2 id="Missing-Information">Missing Information<a class="anchor-link" href="#Missing-Information">&#182;</a></h2><p>To understand if a small observed lift might be due to just random chance, generate new intervals according to our preferences and generally speaking better communicating the results within our company we would need information that’s currently not being provided in a straight forward way.</p>
-<p>Additionally, this information might shed some light into a deeper understanding as for why we need to invest the minimum budget that’s being asked, which in many cases is done for the sole purpose of this study.</p>
+<p>Additionally, this information might shed some light into a deeper understanding as for why we need to invest the minimum budget that’s being asked which in many cases is done for the sole purpose of this study.</p>
 <p>In particular:</p>
+<p><img src="images/normal_curve.png" width="50%" /></p>
 <ul>
 <li><b>Level of significance:</b> Even though numeric confidence intervals are included for every metric, the actual confidence level in terms of percentages is not given nor it is commonly addressed within the documentation. So far, I've been able to locate some official information that states that's "usually around 90%" &lt;/i&gt;<a href="https://support.google.com/displayvideo/answer/9724932?hl=en" target="_blank">[ref]</a> but whether this is one or two-tailed is unclear.</li>
 <li><b>P-Value:</b> This would allow us to make a fast hypothesis check for different levels of confidence we might use.</li>
 </ul>
-<p>Lastly, even through "Total survey responses" is clearly informed both in summary and within the report itself, actual sample size of test and control groups is not displayed by default in the summary page nor it is available anywhere else within the report itself, limiting our ability to conduct our own statistical tests for Age, Gender, Campaign and Video related results.</p>
+<p>Lastly, even though "<i>Total Survey Responses</i>" is clearly informed both in summary and within the report itself, actual sample size of test and control groups is not displayed by default in the summary page nor it is available anywhere else within the report itself, limiting our ability to conduct our own statistical tests for Age, Gender, Campaign and Video related results.</p>
 
 </div>
 </div>
@@ -13117,9 +13119,8 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To understand if a small observed lift might be due to just random chance, generate new intervals according to our preferences and generally speaking better communicating the results within our company we would need information that’s currently not being provided in a straight forward way. Additionally, this information might shed some light into a deeper understanding as for why we need to invest the minimum budget that’s being asked which in many cases is done for the sole purpose of this study. In particular:Level of significance: Even though numeric confidence intervals are included for every metric, the actual confidence level in terms of percentages is not given nor it is commonly addressed within the documentation. So far, I've been able to locate some official information that states that's "usually around 90%" [ref] but whether this is one or two-tailed is unclear. P-Value: This would allow us to make a fast hypothesis check for different levels of confidence we might use. Lastly, even through "Total survey responses" is clearly informed both in summary and within the report itself, actual sample size of test and control groups is not displayed by default in the summary page nor it is available anywhere else within the report itself, limiting our ability to conduct our own statistical tests for Age, Gender, Campaign and Video related results.</p>
 <h1 id="Finding-the-missing-information">Finding the missing information<a class="anchor-link" href="#Finding-the-missing-information">&#182;</a></h1><p>In order to find the missing information we need to perform a heuristic search of all possible combinations of Confidence Levels and Sample Sizes and then compare those results to check which has the better approximation to the results provided by Google.</p>
-<p>In order to avoid a brute-forcing method which is time and resource consuming a custom algorithm was built that will try to learn 2 parameters: Baseline PRR and Interval as defined by the difference between expected Upper and Lower Absolute Brand Lift values.</p>
+<p>In order to avoid a brute-forcing method which is time and resource consuming a custom algorithm was built that will try to learn 2 parameters: <i>Sample Sizes</i> and <i>PRR Interval</i> as defined by the difference between expected Upper and Lower Absolute Brand Lift values.</p>
 <h2 id="Custom-Optimization-Algorithm">Custom Optimization Algorithm<a class="anchor-link" href="#Custom-Optimization-Algorithm">&#182;</a></h2><p>A custom optimization algorithm was built which will allow us to obtain a good approximation of:</p>
 <ul>
 <li>Level of significance.</li>
@@ -13137,8 +13138,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="c1"># Algorithm</span>
-<span class="n">LiftUncover</span> <span class="o">&lt;-</span><span class="nf">function</span><span class="p">(</span><span class="n">Surveys</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">UpperInterval</span><span class="p">,</span><span class="n">LowerInterval</span><span class="p">,</span><span class="n">staticLR</span><span class="o">=</span><span class="n">.</span><span class="m">1</span><span class="p">,</span><span class="n">maxIterations</span><span class="o">=</span><span class="m">10000</span><span class="p">,</span><span class="n">pValue</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="p">{</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">LiftUncover</span> <span class="o">&lt;-</span><span class="nf">function</span><span class="p">(</span><span class="n">Surveys</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">UpperInterval</span><span class="p">,</span><span class="n">LowerInterval</span><span class="p">,</span><span class="n">staticLR</span><span class="o">=</span><span class="n">.</span><span class="m">1</span><span class="p">,</span><span class="n">maxIterations</span><span class="o">=</span><span class="m">10000</span><span class="p">,</span><span class="n">pValue</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="p">{</span>
   
   <span class="c1"># Target parameter initialization</span>
   <span class="n">n1</span> <span class="o">&lt;-</span> <span class="n">Surveys</span><span class="o">*</span><span class="m">0.5</span>
@@ -13213,7 +13213,7 @@ div#notebook {
         <span class="n">errorRate</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="nf">pnorm</span><span class="p">(</span><span class="o">-</span><span class="nf">abs</span><span class="p">(</span><span class="n">zScore</span><span class="p">)),</span><span class="m">2</span><span class="p">)</span>
         <span class="nf">cat</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;   - Predicted Type I Error:&quot;</span><span class="p">,</span><span class="n">errorRate</span><span class="p">,</span><span class="s">&quot;\n&quot;</span><span class="p">))</span>
         
-        <span class="c1"># Adjustment to most likely error selected by Google</span>
+        <span class="c1"># Adjustment to most likely (minimum distance) error selected by Google</span>
         <span class="c1"># Difference might be due to rounded intervals provided</span>
         <span class="n">DefaultErrors</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">.</span><span class="m">01</span><span class="p">,</span><span class="n">.</span><span class="m">05</span><span class="p">,</span><span class="n">.</span><span class="m">1</span><span class="p">,</span><span class="n">.</span><span class="m">2</span><span class="p">,</span><span class="n">.</span><span class="m">25</span><span class="p">,</span><span class="n">.</span><span class="m">3</span><span class="p">,</span><span class="n">.</span><span class="m">45</span><span class="p">)</span>
         <span class="n">Distance</span> <span class="o">&lt;-</span> <span class="nf">abs</span><span class="p">(</span><span class="n">DefaultErrors</span><span class="o">-</span><span class="n">errorRate</span><span class="p">)</span>
@@ -13319,7 +13319,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Confidence-Level-Calculation">Confidence Level Calculation<a class="anchor-link" href="#Confidence-Level-Calculation">&#182;</a></h3><p>We will try to obtain the confidence level used by Google in the report generated by the tool.</p>
-<p><b>Note:</b> We have two outputs (Predicted and Most Likely). This is because Google provides us approximate (rounded) values, which affects this calculation. We will later on use only “Most Likely” value, which is an approximation to commonly used intervals.</p>
+<p><b>Note:</b> We have two outputs (<i>Predicted</i> and <i>Most Likely</i>). This is because Google provides us approximate (rounded) values, which affects this calculation. We will later on use only “<p>Most Likely</p>” value, which is an approximation to commonly used intervals.</p>
 
 </div>
 </div>
@@ -13361,7 +13361,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Sample-Sizes,-Standard-Error-and-p-Values">Sample Sizes, Standard Error and p-Values<a class="anchor-link" href="#Sample-Sizes,-Standard-Error-and-p-Values">&#182;</a></h3><p>Values are calculated using the “Most likely Type I Error” error calculated above. Note that these values will be the best approximation possible to given parameters.</p>
+<h3 id="Sample-Sizes,-Standard-Error-and-p-Values">Sample Sizes, Standard Error and p-Values<a class="anchor-link" href="#Sample-Sizes,-Standard-Error-and-p-Values">&#182;</a></h3><p>Values are calculated using the “Most likely Type I Error” calculated above. Note that these values will be the best approximation possible to given parameters.</p>
 
 </div>
 </div>
@@ -13646,26 +13646,13 @@ This should be a good approximation to the actual values provided by Google</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Final-thoughts">Final thoughts<a class="anchor-link" href="#Final-thoughts">&#182;</a></h1><p>As seen by the report at 95% confidence interval we cannot reject the null hypothesis, therefore, we do not observe a significant lift in Positive Response Rate if we use a level of confidence of 95%. Contrary to this, we initially concluded there was a significant increment by observing the default output from Lift Measurement Tool.</p>
 <p>Opinions may vary as to which confidence interval is acceptable for a Brand Lift Study or any other Marketing Study, which most likely, will ultimately depend on our goal.</p>
-<p>Marketers will most likely be concerned about the actual effect the campaign had in lift values rather than the sole determination if this study is significant or not. In other words, we would like to know if we should continue investing on a specific campaign since we will most likely create budget scenarios in order to achieve a specific goal of lifted users. For this, we need a (known) level of certainty that can enable us to create budget scenarios which will include Costs per lifted users and New Lifted Users amongst others.</p>
+<p>Marketers will most likely be concerned about the actual effect the campaign had in lift values rather than the sole determination if this study is significant or not. In other words, we would like to know if we should continue investing on a specific campaign since we will most likely create budget scenarios in order to achieve a specific goal of lifted users. For this, we need a (known) level of certainty that can enable us to create budget scenarios which will include <i>Costs per lifted users</i> and <i>New Lifted Users</i> amongst others.</p>
 <p>In most studies, this situation is usually addressed by providing the p-value which allows the reader to define its tolerance on accepting or rejecting the hypothesis.</p>
-<h2 id="Feedback">Feedback<a class="anchor-link" href="#Feedback">&#182;</a></h2><p>What's your thought on this? What levels of significance to you use in marketing studies? Is it something you consider relevant?</p>
+<h2 id="Feedback">Feedback<a class="anchor-link" href="#Feedback">&#182;</a></h2><p>What’s your thought on this? What levels of significance do you use in such marketing studies? Is it something you consider relevant?</p>
 <p><a href="https://www.linkedin.com/in/crisandrews/">https://www.linkedin.com/in/crisandrews/</a></p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
